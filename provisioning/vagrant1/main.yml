@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: yes
+
+  #pre_tasks:
+   # - name: Update apt cache if needed.
+    #  apt: update_cache=yes cache_valid_time=3600
+
+  roles:
+    - role: jdauphant.nginx 
+
+  tasks:
+
+   # - import_tasks: installdocker.yml
+
+    - import_tasks: setup.yml
+
+    - import_tasks: build.yml
