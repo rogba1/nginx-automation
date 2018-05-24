@@ -1,45 +1,57 @@
 ---
-- name: Install docker
-  hosts: all
-  become: yes
-  tasks:
-    - name: add docker apt key
-      apt_key: >
-        id=58118E89F3A912897C070ADBF76221572C52609D
-        keyserver=hkp://p80.pool.sks-keyservers.net:80
-        state=present
-    - name: add docker apt repository
-      apt_repository: >
-        repo="deb https://apt.dockerproject.org/repo ubuntu-trusty main"
-        state=present
-        update_cache=yes
-    - name: install docker and requirements
-      apt: >
-        pkg={{item}}
-        state=present
-      with_items:
-        - apparmor
-        - docker-engine
+    - name: Install yum utils
+      yum:
+        name: yum-utils
+        state: latest
 
-    - name: configure docker
-      copy: content='DOCKER_OPTS=""'
-        dest=/etc/default/docker
-      notify: restart docker
+    - name: Install device-mapper-persistent-data
+      yum:
+        name: device-mapper-persistent-data
+        state: latest
 
-    - name: allow vagrant user to run docker commands without sudo
-      user: name=vagrant append=yes groups=docker
+    - name: Install lvm2
+      yum:
+        name: lvm2
+        state: latest
 
-    - name: install required python packages for ansible and docker
-      apt: pkg={{item}} state=latest
-      with_items: [python-pip, python-dev]
+    - name: Add Docker repo
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docer-ce.repo
+      become: yes
 
-    # As of ansible v1.9.1, the docker module uses an older version of the docker-py python package.
-    # https://github.com/ansible/ansible-modules-core/issues/1227
-    - name: install the version of docker-py used by ansible
-      pip: name=docker-py version=1.1.0
+    - name: Enable Docker Edge repo
+      ini_file:
+        dest: /etc/yum.repos.d/docer-ce.repo
+        section: 'docker-ce-edge'
+        option: enabled
+        value: 0
+      become: yes
 
-  handlers:
-    # I can't use the service module because of an issue with ansible and upstart :(
-    # https://github.com/ansible/ansible-modules-core/issues/1170
-    - name: restart docker
-      command: service docker restart
+    - name: Enable Docker Test repo
+      ini_file:
+        dest: /etc/yum.repos.d/docer-ce.repo
+        section: 'docker-ce-test'
+        option: enabled
+        value: 0
+      become: yes
+
+    - name: Install Docker
+      package:
+        name: docker-ce
+        state: latest
+      become: yes
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+      become: yes
+
+    - name: Add user vagrant to docker group
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+      become: yes

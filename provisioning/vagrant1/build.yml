@@ -3,25 +3,24 @@
   docker_image:
     name: "{{ item.name }}"
     tag: "{{ item.tag }}"
-    path: "Users/HomeMac/vagrant/projects/vagrant-automation/provisioner/provisioning/vagrant1/{{ item.directory }}"
+    path: "{{ item.directory }}"
 
     state: build
 
 
   with_items:
 
-   - { name: nginx, tag: "v1", directory: nginx }
+   - { name: nginx-ansible, tag: "v1", directory: nginx-ansible }
 
 - name: Run a nginx  container.
 
   docker_container:
 
-    image: nginx:v1
+    image: nginx-ansible:v1
 
-    name: nginx
+    name: nginx-ansible
 
     state: started
-
 
 
 

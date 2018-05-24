@@ -1,20 +1,12 @@
 ---
-#- name: Add vagrant user to docker group.
- # user:
-  #  name: vagrant
-   # groups: docker
-    #append: yes
-    #become: yes
-  #become: yes
-  #become_user: root
+-   name: Install python setup tools
+    yum: name=python-setuptools
+    tags: docker
 
-#- name: Install Pip.
- # apt: name=python-pip state=installed
-  #apt: pkg=python-pip state=present
-  #become: yes
-  #become_user: vagrant
+-   name: Install Pypi
+    easy_install: name=pip
+    tags: docker
 
-- name: Install Docker Python library.
-  pip: name=docker-py state=present
-  become: yes
-  #become_user: vagrant
+-   name: Install docker-py
+    pip: name=docker-py
+    tags: docker

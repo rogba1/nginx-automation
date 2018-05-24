@@ -1,1 +1,1 @@
-{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/HomeMac/vagrant/projects/vagrant-ansible/provisioner","disabled":false,"__vagrantfile":true}}}
+{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/HomeMac/vagrant/projects/nginx-automation","disabled":false,"__vagrantfile":true}}}
